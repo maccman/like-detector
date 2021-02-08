@@ -34,6 +34,8 @@ export const LikeDetector:React.FC = () => {
   }
 
   const activateTrigger = (trigger: Trigger) => {
+    if (currentTrigger == trigger) return
+
     triggerCount[trigger.id] = triggerCount[trigger.id] || 0
     triggerCount[trigger.id] += 1
     setTriggerCount(triggerCount)

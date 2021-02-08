@@ -4,35 +4,7 @@ import sleep from './sleep'
 import { Transition } from '@headlessui/react'
 import './speech-recognition-shim'
 import { Microphone } from 'heroicons-react'
-
-interface Trigger {
-  id: string
-  words: string[]
-  label: string
-}
-interface TriggerCount {
-  [id: string]: number
-}
-
-const TRIGGERS:Trigger[] = [
-  {
-    id: 'like',
-    words: ['like', 'lake'],
-    label: 'Like',
-  },
-  {
-    id: 'whatever',
-    words: ['whatever'],
-    label: 'Whatever',
-  },
-  {
-    id: 'youknow',
-    words: ['you know'],
-    label: 'You know...',
-  },
-]
-
-type Stage = 'intro' | 'listening' | 'word'
+import { Trigger, Stage, TriggerCount, TRIGGERS } from './types'
 
 export const LikeDetector:React.FC = () => {
   const [currentTrigger, setCurrentTrigger] = useState<Trigger>(null)

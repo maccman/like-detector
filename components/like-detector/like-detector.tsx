@@ -34,7 +34,7 @@ export const LikeDetector:React.FC = () => {
   }
 
   const activateTrigger = (trigger: Trigger) => {
-    if (currentTrigger == trigger) return
+    if (stage != 'listening') return
 
     triggerCount[trigger.id] = triggerCount[trigger.id] || 0
     triggerCount[trigger.id] += 1
@@ -63,8 +63,9 @@ export const LikeDetector:React.FC = () => {
     recognition.continuous = true
     recognition.interimResults = true
     recognition.lang = 'en-US'
-    recognition.maxAlternatives = 1
+    recognition.maxAlternatives = 3
     recognition.onresult = onResult
+    // onError
 
     return recognition
   }, [])

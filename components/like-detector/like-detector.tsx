@@ -69,9 +69,16 @@ export const LikeDetector:React.FC = () => {
     return recognition
   }, [])
 
+  const autoRestart = async () => {
+    await sleep(3000)
+    console.log('autorestart')
+    recognition.start()
+  }
+
   if (recognition) {
     recognition.onresult = onResult
     recognition.onerror = console.error
+    recognition.onend = autoRestart
   }
 
   useEffect(() => {

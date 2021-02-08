@@ -79,7 +79,7 @@ export const LikeDetector:React.FC = () => {
 
     (async () => {
       setStage('intro')
-      await sleep(2000)
+      await sleep(3000)
       recognition.start()
       setStage('listening')
     })()

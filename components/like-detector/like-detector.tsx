@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { debounce } from 'lodash'
 import sleep from './sleep'
 import { Transition } from '@headlessui/react'
 import './speech-recognition-shim'
@@ -13,15 +12,15 @@ export const LikeDetector:React.FC = () => {
   const clientSide = typeof window != 'undefined'
   const speechAvailable = typeof window != 'undefined' && !!window['SpeechRecognition']
 
-  const [triggerCount, setTriggerCount] = useState<TriggerCount>({})
+  const triggerCount = useMemo<TriggerCount>(() => ({}), [])
 
-  const parseCommand = (command: string) => {
+  const parseCommand = async (command: string) => {
     console.log('Parsing:', command)
 
     for (const trigger of TRIGGERS) {
       for (const word of trigger.words) {
         if (command.includes(word)) {
-          activateTrigger(trigger)
+          await activateTrigger(trigger)
           return
         }
       }
@@ -31,11 +30,14 @@ export const LikeDetector:React.FC = () => {
   const activateTrigger = async (trigger: Trigger) => {
     if (stage != 'listening') return
 
+    console.log('Activating trigger', trigger)
+
     triggerCount[trigger.id] = triggerCount[trigger.id] || 0
     triggerCount[trigger.id] += 1
-    setTriggerCount(triggerCount)
+
     setCurrentTrigger(trigger)
     setStage('word')
+
     await sleep(3000)
     setStage('listening')
   }
@@ -62,15 +64,18 @@ export const LikeDetector:React.FC = () => {
     recognition.interimResults = true
     recognition.lang = 'en-US'
     recognition.maxAlternatives = 3
-    recognition.onresult = onResult
-    recognition.onerror = console.error
     // onError
 
     return recognition
   }, [])
 
+  if (recognition) {
+    recognition.onresult = onResult
+    recognition.onerror = console.error
+  }
+
   useEffect(() => {
-    if ( !speechAvailable ) return
+    if ( !recognition ) return
 
     (async () => {
       setStage('intro')
@@ -94,6 +99,8 @@ export const LikeDetector:React.FC = () => {
   }
 
   console.log('Stage', stage)
+
+  const count = currentTrigger ? triggerCount[currentTrigger?.id] : 0
 
   return <>
     <Transition
@@ -122,7 +129,11 @@ export const LikeDetector:React.FC = () => {
       <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-500">
         <h2 className="text-9xl text-white font-bold animate-bounce-in">
           {currentTrigger?.label}
-          <span className="text-3xl ml-5 inline-block align-top">({triggerCount[currentTrigger?.id]})</span>
+
+          {
+            count > 1 &&
+              <span className="text-3xl ml-5 inline-block align-top">({count})</span>
+          }
         </h2>
       </div>
     </Transition>

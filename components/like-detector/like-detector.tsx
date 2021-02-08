@@ -105,10 +105,10 @@ export const LikeDetector:React.FC = () => {
   return <>
     <Transition
       show={stage === 'intro'}
-      enter="transition-opacity duration-75"
+      enter="transition-opacity duration-100"
       enterFrom="opacity-0"
       enterTo="opacity-100"
-      leave="transition-opacity duration-75"
+      leave="transition-opacity duration-100"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >
@@ -119,10 +119,10 @@ export const LikeDetector:React.FC = () => {
 
     <Transition
       show={stage === 'word'}
-      enter="transition-opacity duration-75"
+      enter="transition-opacity duration-100"
       enterFrom="opacity-0"
       enterTo="opacity-100"
-      leave="transition-opacity duration-75"
+      leave="transition-opacity duration-100"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >
@@ -140,10 +140,10 @@ export const LikeDetector:React.FC = () => {
 
     <Transition
       show={stage === 'listening'}
-      enter="transition-opacity duration-75"
+      enter="transition-opacity duration-100"
       enterFrom="opacity-0"
       enterTo="opacity-100"
-      leave="transition-opacity duration-75"
+      leave="transition-opacity duration-100"
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >

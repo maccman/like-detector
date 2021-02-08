@@ -6,20 +6,27 @@ import './speech-recognition-shim'
 import { Microphone } from 'heroicons-react'
 
 interface Trigger {
+  id: string
   words: string[]
   label: string
+}
+interface TriggerCount {
+  [id: string]: number
 }
 
 const TRIGGERS:Trigger[] = [
   {
+    id: 'like',
     words: ['like', 'lake'],
     label: 'Like',
   },
   {
+    id: 'whatever',
     words: ['whatever'],
     label: 'Whatever',
   },
   {
+    id: 'youknow',
     words: ['you know'],
     label: 'You know...',
   },
@@ -28,16 +35,18 @@ const TRIGGERS:Trigger[] = [
 type Stage = 'intro' | 'listening' | 'word'
 
 export const LikeDetector:React.FC = () => {
-  const [currentWord, setCurrentWord] = useState<string>(null)
+  const [currentTrigger, setCurrentTrigger] = useState<Trigger>(null)
   const [stage, setStage] = useState<Stage>('intro')
 
   const clientSide = typeof window != 'undefined'
   const speechAvailable = typeof window != 'undefined' && !!window['SpeechRecognition']
 
-  const cleanupCurrentWord = useMemo(() => debounce(() => {
-    setCurrentWord(null)
+  const [triggerCount, setTriggerCount] = useState<TriggerCount>({})
+
+  const cleanupTrigger = useMemo(() => debounce(() => {
+    setCurrentTrigger(null)
     setStage('listening')
-  }, 2000), [])
+  }, 3000), [])
 
   const parseCommand = (command: string) => {
     console.log('Parsing:', command)
@@ -45,11 +54,20 @@ export const LikeDetector:React.FC = () => {
     for (const trigger of TRIGGERS) {
       for (const word of trigger.words) {
         if (command.includes(word)) {
-          setCurrentWord(trigger.label)
-          setStage('word')
+          activateTrigger(trigger)
+          return
         }
       }
     }
+  }
+
+  const activateTrigger = (trigger: Trigger) => {
+    triggerCount[trigger.id] = triggerCount[trigger.id] || 0
+    triggerCount[trigger.id] += 1
+    setTriggerCount(triggerCount)
+    setCurrentTrigger(trigger)
+    setStage('word')
+    cleanupTrigger()
   }
 
   const onResult = (event: SpeechRecognitionEvent) => {
@@ -62,12 +80,10 @@ export const LikeDetector:React.FC = () => {
     }
 
     parseCommand(results.join(' ').toLowerCase())
-    cleanupCurrentWord()
   }
 
   const recognition = useMemo(() => {
     if ( !speechAvailable ) return
-
 
     const recognition = new SpeechRecognition()
     recognition.continuous = true
@@ -121,6 +137,23 @@ export const LikeDetector:React.FC = () => {
     </Transition>
 
     <Transition
+      show={stage === 'word'}
+      enter="transition-opacity duration-75"
+      enterFrom="opacity-0"
+      enterTo="opacity-100"
+      leave="transition-opacity duration-75"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0"
+    >
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-500">
+        <h2 className="text-9xl text-white font-bold animate-bounce-in">
+          {currentTrigger?.label}
+          <span className="text-3xl ml-5 inline-block align-top">({triggerCount[currentTrigger?.id]})</span>
+        </h2>
+      </div>
+    </Transition>
+
+    <Transition
       show={stage === 'listening'}
       enter="transition-opacity duration-75"
       enterFrom="opacity-0"
@@ -137,20 +170,6 @@ export const LikeDetector:React.FC = () => {
         <p className="italic text-sm text-gray-300 mt-10">
           Hint, say &quot;like&quot;.
         </p>
-      </div>
-    </Transition>
-
-    <Transition
-      show={stage === 'word'}
-      enter="transition-opacity duration-75"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leave="transition-opacity duration-75"
-      leaveFrom="opacity-100"
-      leaveTo="opacity-0"
-    >
-      <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-500">
-        <h2 className="text-9xl text-white font-bold animate-bounce-in">{currentWord}</h2>
       </div>
     </Transition>
   </>

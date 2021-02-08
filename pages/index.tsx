@@ -7,11 +7,11 @@ export default function Home() {
     <Head>
       <meta
         name="description"
-        content='Detect "likes", "whatevers", and other conversation ticks.'
+        content='Detect "likes", "whatevers", and other conversational ticks.'
       />
       <meta
         name="og:description"
-        content='Detect "likes", "whatevers", and other conversation ticks.'
+        content='Detect "likes", "whatevers", and other conversational ticks.'
       />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:site" content="@maccaw" />

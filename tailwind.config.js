@@ -12,7 +12,7 @@ module.exports = {
 
       animation: {
         wiggle: 'wiggle 1s ease-in-out infinite',
-        'bounce-in': 'bounce-in 500ms normal forwards ease-in-out',
+        'bounce-in': 'bounce-in 800ms normal forwards ease-in-out',
       },
 
       keyframes: {

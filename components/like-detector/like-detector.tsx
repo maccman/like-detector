@@ -15,11 +15,6 @@ export const LikeDetector:React.FC = () => {
 
   const [triggerCount, setTriggerCount] = useState<TriggerCount>({})
 
-  const cleanupTrigger = useMemo(() => debounce(() => {
-    setCurrentTrigger(null)
-    setStage('listening')
-  }, 3000), [])
-
   const parseCommand = (command: string) => {
     console.log('Parsing:', command)
 
@@ -33,7 +28,7 @@ export const LikeDetector:React.FC = () => {
     }
   }
 
-  const activateTrigger = (trigger: Trigger) => {
+  const activateTrigger = async (trigger: Trigger) => {
     if (stage != 'listening') return
 
     triggerCount[trigger.id] = triggerCount[trigger.id] || 0
@@ -41,7 +36,8 @@ export const LikeDetector:React.FC = () => {
     setTriggerCount(triggerCount)
     setCurrentTrigger(trigger)
     setStage('word')
-    cleanupTrigger()
+    await sleep(3000)
+    setStage('listening')
   }
 
   const onResult = (event: SpeechRecognitionEvent) => {
@@ -50,10 +46,12 @@ export const LikeDetector:React.FC = () => {
     const results:string[] = []
 
     for (let k = 0; k < speechRecognitionResult.length; k++) {
-      results[k] = speechRecognitionResult[k].transcript
+      results[k] = speechRecognitionResult[k].transcript.toLowerCase()
     }
 
-    parseCommand(results.join(' ').toLowerCase())
+    for (const result of results) {
+      parseCommand(result)
+    }
   }
 
   const recognition = useMemo(() => {
@@ -65,6 +63,7 @@ export const LikeDetector:React.FC = () => {
     recognition.lang = 'en-US'
     recognition.maxAlternatives = 3
     recognition.onresult = onResult
+    recognition.onerror = console.error
     // onError
 
     return recognition

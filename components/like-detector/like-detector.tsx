@@ -1,3 +1,3 @@
 export const LikeDetector = () => {
-  return null
+  return <h1>Detector</h1>
 }

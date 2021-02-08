@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import React from 'react'
 import { LikeDetector } from '../components'
 
 export default function Home() {

@@ -31,6 +31,7 @@ export const LikeDetector:React.FC = () => {
   const [currentWord, setCurrentWord] = useState<string>(null)
   const [stage, setStage] = useState<Stage>('intro')
 
+  const clientSide = typeof window != 'undefined'
   const speechAvailable = typeof window != 'undefined' && !!window['SpeechRecognition']
 
   const cleanupCurrentWord = useMemo(() => debounce(() => {
@@ -93,8 +94,13 @@ export const LikeDetector:React.FC = () => {
     }
   }, [])
 
-  if ( !speechAvailable ) {
-    return <h1>Disabled</h1>
+  if ( !speechAvailable && clientSide ) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <h3 className="text-3xl font-bold">Speech API not available :(</h3>
+        <h4 className="text-3xl font-bold mt-3">Try in Google Chrome</h4>
+      </div>
+    )
   }
 
   console.log('Stage', stage)
@@ -144,7 +150,7 @@ export const LikeDetector:React.FC = () => {
       leaveTo="opacity-0"
     >
       <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-500">
-        <h2 className="text-9xl text-white animate-bounce-in">{currentWord}</h2>
+        <h2 className="text-9xl text-white font-bold animate-bounce-in">{currentWord}</h2>
       </div>
     </Transition>
   </>

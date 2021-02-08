@@ -7,7 +7,25 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+        sans: ['Roboto', ...defaultTheme.fontFamily.sans],
+      },
+
+      animation: {
+        wiggle: 'wiggle 1s ease-in-out infinite',
+        'bounce-in': 'bounce-in 500ms normal forwards ease-in-out',
+      },
+
+      keyframes: {
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+
+        'bounce-in': {
+          '0%': { opacity: 0, transform: 'scale(.8)' },
+          '50%': { opacity: 1, transform: 'scale(1.4)' },
+          '100%': { opacity: 1, transform: 'scale(1)' },
+        }
       },
     }
   },
